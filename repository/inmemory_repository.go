@@ -67,7 +67,10 @@ func (r *Repository) IncreaseStock(id int, quantity int) error {
 		return errors.New("quantity is so great")
 	}
 
-	r.products[i].SetStock(r.products[i].Stock() + quantity)
+	ok := r.products[i].SetStock(r.products[i].Stock() + quantity)
+	if !ok {
+		return errors.New("change stock failed")
+	}
 	return nil
 }
 
@@ -85,7 +88,10 @@ func (r *Repository) DecreaseStock(id int, quantity int) error {
 		return errors.New("quantity is greater than the stock")
 	}
 
-	r.products[i].SetStock(r.products[i].Stock() - quantity)
+	ok := r.products[i].SetStock(r.products[i].Stock() - quantity)
+	if !ok {
+		return errors.New("change stock failed")
+	}
 	return nil
 }
 
@@ -108,7 +114,10 @@ func (r *Repository) Purchase(id int, quantity int) (int, error) {
 		return 0, errors.New("total price overflow")
 	}
 
-	r.products[i].SetStock(r.products[i].Stock() - quantity)
+	ok := r.products[i].SetStock(r.products[i].Stock() - quantity)
+	if !ok {
+		return 0, errors.New("change stock failed")
+	}
 	return quantity * product.Price(), nil
 }
 

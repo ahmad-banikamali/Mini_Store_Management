@@ -40,7 +40,10 @@ func TestListProducts(t *testing.T) {
 		t.Error("replacing product in returned slice affected repository")
 	}
 
-	products[0].SetStock(2)
+	ok := products[0].SetStock(2)
+	if !ok {
+		t.Error("change stock failed")
+	}
 
 	got, err = r.FindByID(10)
 	if err != nil {

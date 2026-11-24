@@ -8,13 +8,19 @@ import (
 )
 
 type Repository struct {
-	Products []model.Product
+	products []model.Product
 }
 
 func NewRepository() Repository {
 	return Repository{
-		Products: make([]model.Product, 0),
+		products: make([]model.Product, 0),
 	}
+}
+
+func (r *Repository) ListProducts() []model.Product {
+	p := make([]model.Product, len(r.products))
+	copy(p, r.products)
+	return p
 }
 
 func (r *Repository) Add(p model.Product) error {
@@ -27,12 +33,12 @@ func (r *Repository) Add(p model.Product) error {
 	if i != -1 {
 		return errors.New("product already exists")
 	}
-	r.Products = append(r.Products, p)
+	r.products = append(r.products, p)
 	return nil
 }
 
 func (r *Repository) FindProductIndex(id int) int {
-	return slices.IndexFunc(r.Products, func(product model.Product) bool {
+	return slices.IndexFunc(r.products, func(product model.Product) bool {
 		return product.Id() == id
 	})
 }
@@ -42,7 +48,7 @@ func (r *Repository) FindByID(id int) (model.Product, error) {
 	if index == -1 {
 		return model.Product{}, errors.New("product not found")
 	}
-	product := r.Products[index]
+	product := r.products[index]
 
 	return product, nil
 }
@@ -57,11 +63,11 @@ func (r *Repository) IncreaseStock(id int, quantity int) error {
 		return errors.New("quantity must be positive")
 	}
 
-	if quantity > math.MaxInt-r.Products[i].Stock() {
+	if quantity > math.MaxInt-r.products[i].Stock() {
 		return errors.New("quantity is so great")
 	}
 
-	r.Products[i].SetStock(r.Products[i].Stock() + quantity)
+	r.products[i].SetStock(r.products[i].Stock() + quantity)
 	return nil
 }
 
@@ -75,11 +81,11 @@ func (r *Repository) DecreaseStock(id int, quantity int) error {
 		return errors.New("quantity must be positive")
 	}
 
-	if quantity > r.Products[i].Stock() {
+	if quantity > r.products[i].Stock() {
 		return errors.New("quantity is greater than the stock")
 	}
 
-	r.Products[i].SetStock(r.Products[i].Stock() - quantity)
+	r.products[i].SetStock(r.products[i].Stock() - quantity)
 	return nil
 }
 
@@ -93,7 +99,7 @@ func (r *Repository) Purchase(id int, quantity int) (int, error) {
 		return 0, errors.New("quantity must be positive")
 	}
 
-	product := r.Products[i]
+	product := r.products[i]
 	if quantity > product.Stock() {
 		return 0, errors.New("quantity is greater than the stock")
 	}
@@ -102,7 +108,7 @@ func (r *Repository) Purchase(id int, quantity int) (int, error) {
 		return 0, errors.New("total price overflow")
 	}
 
-	r.Products[i].SetStock(r.Products[i].Stock() - quantity)
+	r.products[i].SetStock(r.products[i].Stock() - quantity)
 	return quantity * product.Price(), nil
 }
 
@@ -112,10 +118,10 @@ func (r *Repository) Remove(id int) error {
 		return errors.New("product not found")
 	}
 
-	if r.Products[i].Stock() != 0 {
+	if r.products[i].Stock() != 0 {
 		return errors.New("product stock is not zero")
 	}
 
-	r.Products = slices.Delete(r.Products, i, i+1)
+	r.products = slices.Delete(r.products, i, i+1)
 	return nil
 }

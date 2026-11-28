@@ -29,7 +29,7 @@ func (r *Repository) Add(p model.Product) error {
 		return err
 	}
 
-	i := r.FindProductIndex(p.Id())
+	i := r.FindProductIndex(p.ID())
 	if i != -1 {
 		return errors.New("product already exists")
 	}
@@ -39,7 +39,7 @@ func (r *Repository) Add(p model.Product) error {
 
 func (r *Repository) FindProductIndex(id int) int {
 	return slices.IndexFunc(r.products, func(product model.Product) bool {
-		return product.Id() == id
+		return product.ID() == id
 	})
 }
 

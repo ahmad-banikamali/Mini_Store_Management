@@ -37,7 +37,7 @@ func (p *Product) SetName(name string) bool {
 	return true
 }
 
-func (p *Product) Id() int {
+func (p *Product) ID() int {
 	return p.id
 }
 
